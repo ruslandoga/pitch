@@ -31,7 +31,7 @@ defmodule Pitch do
       |> NimbleCSV.RFC4180.parse_string(skip_headers: true)
       |> Enum.map(fn [term | [reading | _rest]] = row ->
         case lookup(term, reading) do
-          [%{html: html}] -> List.insert_at(row, 2, html)
+          [%{html: html}] -> List.replace_at(row, 3, html)
           [] -> row
         end
       end)
