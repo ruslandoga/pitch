@@ -29,9 +29,9 @@ defmodule Pitch do
     iodata =
       File.read!(file)
       |> NimbleCSV.RFC4180.parse_string(skip_headers: true)
-      |> Enum.map(fn [_ | [term | [reading | _rest]]] = row ->
+      |> Enum.map(fn [term | [reading | _rest]] = row ->
         case lookup(term, reading) do
-          [%{html: html}] -> List.insert_at(row, 3, html)
+          [%{html: html}] -> List.insert_at(row, 2, html)
           [] -> row
         end
       end)
