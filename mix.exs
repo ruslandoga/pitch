@@ -21,7 +21,10 @@ defmodule Pitch.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:nimble_csv, "~> 1.1"}
+      {:nimble_csv, "~> 1.1"},
+      {:finch, "~> 0.9.0"},
+      {:jason, "~> 1.2"},
+      {:retry, "~> 0.15.0"}
     ]
   end
 end
