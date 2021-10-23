@@ -25,21 +25,27 @@ defmodule Pitch do
   # "priv/🇯🇵 Vocabulary - JLPT5 RU.csv"
   # "priv/🇯🇵 Vocabulary - JLPT5への言葉.csv"
 
-  def process(file) do
-    iodata =
-      File.read!(file)
-      |> NimbleCSV.RFC4180.parse_string(skip_headers: true)
-      |> Enum.map(fn [term | [reading | _rest]] = row ->
+  def process(file \\ "priv/🇯🇵 Vocabulary - JLPT5.csv") do
+    [headers | body] =
+      file
+      |> File.read!()
+      |> NimbleCSV.RFC4180.parse_string(skip_headers: false)
+
+    processed =
+      Enum.map(body, fn [term | [_mas | [reading | _rest]]] = row ->
         case lookup(term, reading) do
-          [%{html: html}] -> List.replace_at(row, 3, html)
+          [%{html: html}] -> List.replace_at(row, 11, html)
           [] -> row
         end
       end)
-      |> Pitch.Parser.dump_to_iodata()
 
     file
     |> String.replace(Path.extname(file), ".tsv")
-    |> File.write!(iodata)
+    |> File.write!(Pitch.Parser.dump_to_iodata([headers | processed]))
+
+    file
+    |> String.replace(Path.extname(file), "-processed.csv")
+    |> File.write!(NimbleCSV.RFC4180.dump_to_iodata([headers | processed]))
   end
 
   def html(reading, positions) do
